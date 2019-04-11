@@ -1,0 +1,2 @@
+# ewc
+Enhanced Word Count
