@@ -7,6 +7,4 @@ This was meant to give a blueprint for:
 
 * handle cli arguments with *clap.rs*
 * reading and managing file data
-
-## Todo
-Need to be compiled and tested on Windows and OSX. Also, need to handle more than one file as *wc* does.
+* reading compressd gzip files transparently using the *flate2* crate

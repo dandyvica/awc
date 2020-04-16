@@ -7,6 +7,7 @@ pub struct FrameWork<T> {
     pub lines: T,
     pub max_line: T,
     pub min_line: T,
+    pub zipped: T,
 }
 
 impl<T: Default> FrameWork<T> {
@@ -18,40 +19,40 @@ impl<T: Default> FrameWork<T> {
             lines: T::default(),
             max_line: T::default(),
             min_line: T::default(),
+            zipped: T::default(),
         }
     }
 }
 
-pub type Option = FrameWork<bool>;
-pub type Stat = FrameWork<u64>;
+pub type Options = FrameWork<bool>;
+pub type Stats = FrameWork<u64>;
 
 // This is used for displaying the final result
-impl Stat {
-    pub fn results(&self, opt: &Option) {
+impl Stats {
+    pub fn print_results(&self, opt: &Options) {
         if opt.bytes {
-            print!("{} ",self.bytes);
+            print!("{} ", self.bytes);
         }
 
         if opt.chars {
-            print!("{} ",self.chars);
+            print!("{} ", self.chars);
         }
 
         if opt.words {
-            print!("{} ",self.words);
+            print!("{} ", self.words);
         }
 
         if opt.lines {
-            print!("{} ",self.lines);
+            print!("{} ", self.lines);
         }
 
         if opt.min_line {
-            print!("{} ",self.min_line);
+            print!("{} ", self.min_line);
         }
 
         if opt.max_line {
-            print!("{} ",self.max_line);
+            print!("{} ", self.max_line);
         }
         println!("");
-
     }
 }
