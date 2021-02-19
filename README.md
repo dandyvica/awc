@@ -5,6 +5,6 @@ command line utility. It reads any UTF-8 file as *wc* does and prints out data t
 
 This was meant to give a blueprint for: 
 
-* handle cli arguments with *clap.rs*
+* managing command line arguments
 * reading and managing file data
-* reading compressd gzip files transparently using the *flate2* crate
+* reading compressed gzip files transparently using the *flate2* crate
