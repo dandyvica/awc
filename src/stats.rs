@@ -1,6 +1,6 @@
-use std::path::Path;
 use std::iter::Sum;
 use std::ops::AddAssign;
+use std::path::Path;
 
 use crate::options::CliOptions;
 

@@ -5,6 +5,20 @@ command line utility. It reads any UTF-8 file as *wc* does and prints out data t
 
 This was meant to give a blueprint for: 
 
-* managing command line arguments
+* managing command line arguments (but without *clap*)
 * reading and managing file data
 * reading compressed gzip files transparently using the *flate2* crate
+
+Usage is the same as the *wc* GNU command, but with more consistant flags (e.g.: *-c* is for couting chars while it's meant for bytes in *wc*). Combining flags is possible (e.g.: *-bcw*).
+
+Examples:
+
+```bash
+$ awc -bc /var/syslog/*.log
+```
+
+```cmd.exe
+C:\> awc -bc c:\windows\system32\*.xml
+```
+
+

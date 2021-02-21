@@ -10,6 +10,9 @@ USAGE:
     awc [FLAGS] [FILES]
 
 FLAGS:
+    -a, --all
+            same as -bclLMw       
+
     -b, --bytes
             print the byte counts
 

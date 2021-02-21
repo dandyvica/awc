@@ -1,6 +1,6 @@
 use std::env;
-use std::path::PathBuf;
 use std::io::{self, BufReader};
+use std::path::PathBuf;
 
 mod stats;
 use stats::Stats;
@@ -60,38 +60,54 @@ fn main() -> Result<(), std::io::Error> {
 // returns the list of files from command line
 #[cfg(target_family = "unix")]
 fn get_files<'a>(args: &'a [String]) -> Vec<PathBuf> {
-    args
-    .iter()
-    .skip(1)    // first element is the executable file name, so skip it
-    //.map(|x| x as &str) // transforms to a vector of references
-    .filter(|&x| !x.starts_with("-"))   // and only keep non-flags (not starting with "-")
-    .map(|x| PathBuf::from(x))
-    .collect()
+    args.iter()
+        .skip(1) // first element is the executable file name, so skip it
+        //.map(|x| x as &str) // transforms to a vector of references
+        .filter(|&x| !x.starts_with("-")) // and only keep non-flags (not starting with "-")
+        .map(|x| PathBuf::from(x))
+        .collect()
 }
 
 #[cfg(target_family = "windows")]
-fn get_files<'a>(args: &'a [String]) -> Vec<&'a str> {
+fn get_files<'a>(args: &'a [String]) -> Vec<PathBuf> {
     // fetch glob because on Windows, no file name expansion is made. So if we pass '*.jpg', we only
     // get this
-    let glob = args
-    .iter()
-    .skip(1)    // first element is the executable file name, so skip it
-    .map(|x| x as &str) // transforms to a vector of references
-    .filter(|&x| !x.starts_with("-"))   // and only keep non-flags (not starting with "-")
-    .collect();
+    let pattern = args
+        .iter()
+        .skip(1) // first element is the executable file name, so skip it
+        .map(|x| x as &str) // transforms to a vector of references
+        .find(|&x| !x.starts_with("-")); // and only keep non-flags (not starting with "-")
 
-    debug_assert!(glob.len() == 1);
+    // this vector will hold the list of found files
+    let v: Vec<PathBuf> = Vec::new();
+    if pattern.is_none() {
+        return v;
+    }
 
-    let v: Vec<String> = Vec::new();
+    debug_assert!(pattern.is_some());
 
-    for entry in glob(glob[1]).unwrap() {
+    let mut v: Vec<PathBuf> = Vec::new();
+    let pattern = pattern.unwrap();
+
+    for entry in glob(pattern).unwrap() {
         match entry {
             Ok(path) => v.push(path),
-    
+
             // if the path matched but was unreadable,
             // thereby preventing its contents from matching
-            Err(e) => eprintln!("error {} trying to get file names using pattern {}", e, glob[1]),
+            Err(e) => eprintln!(
+                "error {} trying to get file names using pattern {}",
+                e, pattern
+            ),
         }
+    }
+
+    // contrary to UNIX where the file name expansion is made before calling awc,
+    // on Windows, it's not. In this case, we need to check whether the glob returned
+    // some files
+    if v.is_empty() {
+        eprintln!("no files found with pattern {}", pattern);
+        std::process::exit(0);
     }
 
     v

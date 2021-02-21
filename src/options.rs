@@ -84,7 +84,7 @@ impl CliOptions {
         self.words = true;
         self.lines = true;
         self.max_line = true;
-        self.min_line = true;        
+        self.min_line = true;
     }
 
     // just print out help text
