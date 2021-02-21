@@ -62,7 +62,6 @@ fn main() -> Result<(), std::io::Error> {
 fn get_files<'a>(args: &'a [String]) -> Vec<PathBuf> {
     args.iter()
         .skip(1) // first element is the executable file name, so skip it
-        //.map(|x| x as &str) // transforms to a vector of references
         .filter(|&x| !x.starts_with("-")) // and only keep non-flags (not starting with "-")
         .map(|x| PathBuf::from(x))
         .collect()
@@ -72,23 +71,29 @@ fn get_files<'a>(args: &'a [String]) -> Vec<PathBuf> {
 fn get_files<'a>(args: &'a [String]) -> Vec<PathBuf> {
     // fetch glob because on Windows, no file name expansion is made. So if we pass '*.jpg', we only
     // get this
-    let pattern = args
+    let files: Vec<PathBuf> = args
         .iter()
         .skip(1) // first element is the executable file name, so skip it
-        .map(|x| x as &str) // transforms to a vector of references
-        .find(|&x| !x.starts_with("-")); // and only keep non-flags (not starting with "-")
+        .filter(|&x| !x.starts_with("-")) // and only keep non-flags (not starting with "-")
+        .map(|x| PathBuf::from(x))
+        .collect();
 
-    // this vector will hold the list of found files
-    let v: Vec<PathBuf> = Vec::new();
-    if pattern.is_none() {
-        return v;
+    // depending on how many arguments we got, we can process
+    let pattern: &str;
+
+    match files.len() {
+        // no files means sdtin
+        0 => return Vec::new(),
+
+        // 1 files means a pattern
+        1 => pattern = files[0].to_str().unwrap(),
+
+        // 2 or more means a list of files without globs
+        _ => return files,
     }
 
-    debug_assert!(pattern.is_some());
-
+    // this vector will hold the list of found files
     let mut v: Vec<PathBuf> = Vec::new();
-    let pattern = pattern.unwrap();
-
     for entry in glob(pattern).unwrap() {
         match entry {
             Ok(path) => v.push(path),

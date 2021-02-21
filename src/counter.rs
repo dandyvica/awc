@@ -187,7 +187,7 @@ mod tests {
 
     #[test]
     #[cfg(target_family = "windows")]
-    fn count() {
+    fn count_gzipped() {
         // set options
         let mut options = CliOptions::default();
         options.bytes = true;
@@ -196,6 +196,7 @@ mod tests {
         options.lines = true;
         options.max_line = true;
         options.min_line = true;
+        options.zipped = true;
 
         // sample text
         let stats = Counter::count("tests/poe.windows.gz", &options);
