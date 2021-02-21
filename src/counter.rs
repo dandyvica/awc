@@ -135,6 +135,32 @@ mod tests {
     }
 
     #[test]
+    #[cfg(target_family = "unix")]
+    fn count_gzipped() {
+        // set options
+        let mut options = CliOptions::default();
+        options.bytes = true;
+        options.chars = true;
+        options.words = true;
+        options.lines = true;
+        options.max_line = true;
+        options.min_line = true;
+        options.zipped = true;
+
+        // sample text
+        let stats = Counter::count("tests/poe.unix.gz", &options);
+        assert!(stats.is_ok());
+
+        let stats = stats.unwrap();
+
+        assert_eq!(stats.bytes, 25260);
+        assert_eq!(stats.chars, 25258);
+        assert_eq!(stats.words, 3969);
+        assert_eq!(stats.lines, 887);
+        assert_eq!(stats.max_line, 73);
+    }
+
+    #[test]
     #[cfg(target_family = "windows")]
     fn count() {
         // set options
@@ -148,6 +174,31 @@ mod tests {
 
         // sample text
         let stats = Counter::count("tests/poe.windows", &options);
+        assert!(stats.is_ok());
+
+        let stats = stats.unwrap();
+
+        assert_eq!(stats.bytes, 26150);
+        assert_eq!(stats.chars, 26146);
+        assert_eq!(stats.words, 3969);
+        assert_eq!(stats.lines, 887);
+        assert_eq!(stats.max_line, 73);
+    }
+
+    #[test]
+    #[cfg(target_family = "windows")]
+    fn count() {
+        // set options
+        let mut options = CliOptions::default();
+        options.bytes = true;
+        options.chars = true;
+        options.words = true;
+        options.lines = true;
+        options.max_line = true;
+        options.min_line = true;
+
+        // sample text
+        let stats = Counter::count("tests/poe.windows.gz", &options);
         assert!(stats.is_ok());
 
         let stats = stats.unwrap();

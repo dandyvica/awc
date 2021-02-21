@@ -1,5 +1,5 @@
 use std::env;
-use std::io::{self, BufReader};
+use std::io::{self, BufRead};
 use std::path::PathBuf;
 
 mod stats;
@@ -26,19 +26,19 @@ fn main() -> Result<(), std::io::Error> {
     let options = CliOptions::check_args(&args);
 
     // get files from arguments
-    let files = get_files(&args);
+    let mut files = get_files(&args);
 
-    // if no files this means we want to read from stdin
+    // waiting for stdin
     if files.is_empty() {
-        let reader = BufReader::new(io::stdin());
-        match Counter::read_file(reader, &options) {
-            Ok(stats) => stats.print_results(&options, ""),
-            Err(e) => eprintln!("error '{}' when counting from stdin", e),
-        };
-        return Ok(());
+        files = io::stdin()
+            .lock()
+            .lines()
+            .filter(|x| x.is_ok())
+            .map(|x| PathBuf::from(x.unwrap()))
+            .collect();
     }
 
-    // calculate stats for each file found
+    // now just coutn for each file found
     for f in &files {
         match Counter::count(f, &options) {
             Ok(stats) => {

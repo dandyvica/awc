@@ -10,11 +10,12 @@ This was meant to give a blueprint for:
 * reading compressed gzip files transparently using the *flate2* crate
 
 Usage is the same as the *wc* GNU command, but with more consistant flags (e.g.: *-c* is for couting chars while it's meant for bytes in *wc*). Combining flags is possible (e.g.: *-bcw*).
+In addition, the *-z* flag indicates the input file is gzipped.
 
 Examples:
 
 ```bash
-$ awc -bc /var/syslog/*.log
+$ awc -bc /var/log/*.log
 ```
 
 ```cmd.exe

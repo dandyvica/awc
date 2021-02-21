@@ -33,3 +33,6 @@ FLAGS:
 
     -w, --words
             print the word counts
+
+    -z, --zip
+            means the input file is gzipped
