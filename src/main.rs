@@ -7,6 +7,7 @@ use stats::Stats;
 mod counter;
 use counter::Counter;
 
+#[cfg(target_family = "windows")]
 use glob::glob;
 
 mod options;

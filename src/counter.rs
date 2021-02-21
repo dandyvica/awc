@@ -150,8 +150,8 @@ mod tests {
 
         let stats = stats.unwrap();
 
-        assert_eq!(stats.bytes, 25260);
-        assert_eq!(stats.chars, 25258);
+        assert_eq!(stats.bytes, 26150);
+        assert_eq!(stats.chars, 26146);
         assert_eq!(stats.words, 3969);
         assert_eq!(stats.lines, 887);
         assert_eq!(stats.max_line, 73);
