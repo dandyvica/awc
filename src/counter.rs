@@ -1,6 +1,8 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader, Error};
 
+use std::path::Path;
+
 use flate2::read::GzDecoder;
 
 use crate::options::CliOptions;
@@ -9,7 +11,7 @@ use crate::stats::Stats;
 pub struct Counter;
 
 impl Counter {
-    pub fn count(file_name: &str, options: &CliOptions) -> Result<Stats, Error> {
+    pub fn count<P: AsRef<Path>>(file_name: P, options: &CliOptions) -> Result<Stats, Error> {
         let file = File::open(file_name)?;
 
         let stats = if options.zipped {

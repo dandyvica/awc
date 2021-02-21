@@ -1,4 +1,5 @@
 use std::env;
+use std::path::PathBuf;
 use std::io::{self, BufReader};
 
 mod stats;
@@ -25,19 +26,14 @@ fn main() -> Result<(), std::io::Error> {
     let options = CliOptions::check_args(&args);
 
     // get files from arguments
-    let files: Vec<&str> = args
-        .iter()
-        .skip(1)
-        .map(|x| x as &str)
-        .filter(|&x| !x.starts_with("-"))
-        .collect();
+    let files = get_files(&args);
 
     // if no files this means we want to read from stdin
     if files.is_empty() {
         let reader = BufReader::new(io::stdin());
         match Counter::read_file(reader, &options) {
             Ok(stats) => stats.print_results(&options, ""),
-            Err(e) => println!("error '{}' when counting from stdin", e),
+            Err(e) => eprintln!("error '{}' when counting from stdin", e),
         };
         return Ok(());
     }
@@ -49,7 +45,7 @@ fn main() -> Result<(), std::io::Error> {
                 stats.print_results(&options, f);
                 sum_stats += stats;
             }
-            Err(e) => println!("error '{}' when counting into file {}", e, f),
+            Err(e) => eprintln!("error '{}' when counting into file {}", e, f.display()),
         };
     }
 
@@ -59,4 +55,44 @@ fn main() -> Result<(), std::io::Error> {
     }
 
     Ok(())
+}
+
+// returns the list of files from command line
+#[cfg(target_family = "unix")]
+fn get_files<'a>(args: &'a [String]) -> Vec<PathBuf> {
+    args
+    .iter()
+    .skip(1)    // first element is the executable file name, so skip it
+    //.map(|x| x as &str) // transforms to a vector of references
+    .filter(|&x| !x.starts_with("-"))   // and only keep non-flags (not starting with "-")
+    .map(|x| PathBuf::from(x))
+    .collect()
+}
+
+#[cfg(target_family = "windows")]
+fn get_files<'a>(args: &'a [String]) -> Vec<&'a str> {
+    // fetch glob because on Windows, no file name expansion is made. So if we pass '*.jpg', we only
+    // get this
+    let glob = args
+    .iter()
+    .skip(1)    // first element is the executable file name, so skip it
+    .map(|x| x as &str) // transforms to a vector of references
+    .filter(|&x| !x.starts_with("-"))   // and only keep non-flags (not starting with "-")
+    .collect();
+
+    debug_assert!(glob.len() == 1);
+
+    let v: Vec<String> = Vec::new();
+
+    for entry in glob(glob[1]).unwrap() {
+        match entry {
+            Ok(path) => v.push(path),
+    
+            // if the path matched but was unreadable,
+            // thereby preventing its contents from matching
+            Err(e) => eprintln!("error {} trying to get file names using pattern {}", e, glob[1]),
+        }
+    }
+
+    v
 }

@@ -1,5 +1,5 @@
+use std::path::Path;
 use std::iter::Sum;
-use std::ops::Add;
 use std::ops::AddAssign;
 
 use crate::options::CliOptions;
@@ -17,7 +17,7 @@ pub struct Stats {
 
 // This is used for displaying the final result
 impl Stats {
-    pub fn print_results(&self, opt: &CliOptions, text: &str) {
+    pub fn print_results<P: AsRef<Path>>(&self, opt: &CliOptions, f: P) {
         if opt.bytes {
             print!("{:8} ", self.bytes);
         }
@@ -41,7 +41,7 @@ impl Stats {
         if opt.max_line {
             print!("{:8} ", self.max_line);
         }
-        println!("{}", text);
+        println!("{}", f.as_ref().display());
     }
 }
 

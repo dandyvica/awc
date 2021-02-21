@@ -1,10 +1,12 @@
 [package]
 name = "awc"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["dandyvica <dandyvica@gmail.com>"]
 edition = "2018"
 
 [dependencies]
 flate2 = "1.0.14"
+
+[target.'cfg(windows)'.dependencies]
 glob = "0.3.0"
 

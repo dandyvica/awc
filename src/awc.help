@@ -1,0 +1,32 @@
+Another word count v 0.3
+Alain Viguier dandyvica@gmail.com
+A word counters inspired by the GNU wc command.
+
+            Project home page: https://github.com/dandyvica/awc
+            
+            
+
+USAGE:
+    awc [FLAGS] [FILES]
+
+FLAGS:
+    -b, --bytes
+            print the byte counts
+
+    -c, --chars
+            print the character counts
+
+    -h, --help
+            Prints help information
+
+    -l, --lines
+            print the newline counts (UNIX) or LF/CR counts (Windows)
+
+    -L, --max-line-length
+            print the maximum display width
+
+    -M, --min-line-length
+            print the minimum display width
+
+    -w, --words
+            print the word counts
