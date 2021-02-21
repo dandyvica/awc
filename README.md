@@ -1,6 +1,6 @@
 ## Another Word Count
 
-This is a simple Linux/OSX cli or Windows console executable which mimics (somehow) the well known *wc* GNU
+This is a simple Linux/BSD cli or Windows console executable which mimics (somehow) the well known *wc* GNU
 command line utility. It reads any UTF-8 file as *wc* does and prints out data to the standard output.
 
 This was meant to give a blueprint for: 
@@ -22,4 +22,46 @@ $ awc -bc /var/log/*.log
 C:\> awc -bc c:\windows\system32\*.xml
 ```
 
+Usage:
+
+```
+Another word count v 0.3
+Alain Viguier dandyvica@gmail.com
+A word counters inspired by the GNU wc command.
+
+            Project home page: https://github.com/dandyvica/awc
+            
+            
+
+USAGE:
+    awc [FLAGS] [FILES]
+
+FLAGS:
+    -a, --all
+            same as -bclLMw       
+
+    -b, --bytes
+            print the byte counts
+
+    -c, --chars
+            print the character counts
+
+    -h, --help
+            Prints help information
+
+    -l, --lines
+            print the newline counts (UNIX) or LF/CR counts (Windows)
+
+    -L, --max-line-length
+            print the maximum display width
+
+    -M, --min-line-length
+            print the minimum display width
+
+    -w, --words
+            print the word counts
+
+    -z, --zip
+            means the input file is gzipped
+```
 
