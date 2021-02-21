@@ -82,3 +82,44 @@ impl<'a> CliOptions<'a> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn check_args() {
+        let args = vec!["-b".to_string()];
+        let options = CliOptions::check_args(&args);
+        assert!(options.bytes);
+
+        let args = vec!["-c".to_string()];
+        let options = CliOptions::check_args(&args);
+        assert!(options.chars);
+
+        let args = vec!["-w".to_string()];
+        let options = CliOptions::check_args(&args);
+        assert!(options.words);
+
+        let args = vec!["-l".to_string()];
+        let options = CliOptions::check_args(&args);
+        assert!(options.lines);
+
+        let args = vec!["-L".to_string()];
+        let options = CliOptions::check_args(&args);
+        assert!(options.max_line);
+
+        let args = vec!["-M".to_string()];
+        let options = CliOptions::check_args(&args);
+        assert!(options.min_line);
+
+        let args = vec!["-bcwlLM".to_string()];
+        let options = CliOptions::check_args(&args);
+        assert!(options.bytes);
+        assert!(options.chars);
+        assert!(options.words);
+        assert!(options.lines);
+        assert!(options.max_line);
+        assert!(options.min_line);
+    }
+}

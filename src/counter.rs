@@ -66,9 +66,18 @@ impl Counter {
                 //eprint!("{};{};{};{}", nb_read, line.chars().count(), nb_read-line.chars().count(), line);
             }
 
+            // count chars if any
+            if opt.words {
+                stats.words += line.split_whitespace().count() as u64;
+            }
+
             // calculate max_line if any
             if opt.max_line {
+                #[cfg(target_family = "unix")]
                 let tmp = line.chars().count() as u64 - 1;
+                #[cfg(target_family = "windows")]
+                let tmp = line.chars().count() as u64 - 2;
+
                 if tmp > stats.max_line {
                     stats.max_line = tmp;
                 }
@@ -76,15 +85,14 @@ impl Counter {
 
             // calculate min_line if any
             if opt.min_line {
+                #[cfg(target_family = "unix")]
                 let tmp = line.chars().count() as u64 - 1;
+                #[cfg(target_family = "windows")]
+                let tmp = line.chars().count() as u64 - 2;
+                1;
                 if tmp < stats.min_line {
                     stats.min_line = tmp;
                 }
-            }
-
-            // count chars if any
-            if opt.words {
-                stats.words += line.split_whitespace().count() as u64;
             }
 
             // clear buffer to not accumulate data
@@ -92,5 +100,60 @@ impl Counter {
         }
 
         Ok(stats)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    #[cfg(target_family = "unix")]
+    fn count() {
+        // set options
+        let mut options = CliOptions::default();
+        options.bytes = true;
+        options.chars = true;
+        options.words = true;
+        options.lines = true;
+        options.max_line = true;
+        options.min_line = true;
+
+        // sample text
+        let stats = Counter::count("tests/poe.unix", &options);
+        assert!(stats.is_ok());
+
+        let stats = stats.unwrap();
+
+        assert_eq!(stats.bytes, 25260);
+        assert_eq!(stats.chars, 25258);
+        assert_eq!(stats.words, 3969);
+        assert_eq!(stats.lines, 887);
+        assert_eq!(stats.max_line, 73);
+    }
+
+    #[test]
+    #[cfg(target_family = "windows")]
+    fn count() {
+        // set options
+        let mut options = CliOptions::default();
+        options.bytes = true;
+        options.chars = true;
+        options.words = true;
+        options.lines = true;
+        options.max_line = true;
+        options.min_line = true;
+
+        // sample text
+        let stats = Counter::count("tests/poe.windows", &options);
+        assert!(stats.is_ok());
+
+        let stats = stats.unwrap();
+
+        assert_eq!(stats.bytes, 25260);
+        assert_eq!(stats.chars, 25258);
+        assert_eq!(stats.words, 3969);
+        assert_eq!(stats.lines, 887);
+        assert_eq!(stats.max_line, 73);
     }
 }

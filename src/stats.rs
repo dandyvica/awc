@@ -75,3 +75,36 @@ impl AddAssign for Stats {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn add_assign() {
+        let mut stats1 = Stats::default();
+        stats1.bytes = 1;
+        stats1.chars = 1;
+        stats1.words = 1;
+        stats1.lines = 1;
+        stats1.max_line = 1;
+        stats1.min_line = 1;
+
+        let mut stats2 = Stats::default();
+        stats1.bytes = 2;
+        stats1.chars = 2;
+        stats1.words = 2;
+        stats1.lines = 2;
+        stats1.max_line = 2;
+        stats1.min_line = 2;
+
+        stats2 += stats1;
+
+        assert_eq!(stats2.bytes, 2);
+        assert_eq!(stats2.chars, 2);
+        assert_eq!(stats2.words, 2);
+        assert_eq!(stats2.lines, 2);
+        assert_eq!(stats2.max_line, 2);
+        assert_eq!(stats2.min_line, 2);
+    }
+}
