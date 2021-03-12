@@ -132,6 +132,19 @@ mod tests {
         assert_eq!(stats.words, 3969);
         assert_eq!(stats.lines, 887);
         assert_eq!(stats.max_line, 73);
+
+        // greek text with greek chars
+        let stats = Counter::count("tests/odysseus.unix", &options);
+        assert!(stats.is_ok());
+
+        let stats = stats.unwrap();
+
+        assert_eq!(stats.bytes, 3776);
+        assert_eq!(stats.chars, 1935);
+        assert_eq!(stats.words, 304);
+        assert_eq!(stats.lines, 44);
+        assert_eq!(stats.max_line, 50);
+        assert_eq!(stats.min_line, 1);
     }
 
     #[test]
