@@ -95,6 +95,11 @@ impl Counter {
             line.clear();
         }
 
+        // sanity check for empty files
+        if stats.min_line == std::u64::MAX {
+            stats.min_line = 0;
+        }        
+
         Ok(stats)
     }
 }
@@ -126,19 +131,22 @@ fn line_length(line: &str) -> u64 {
     }
 
     // other calculate length
-    let l = line.chars().count() as u64;
+    let l = line.chars().count();
     if l == 1 {
         return 1;
     }
 
-
     let last_char = line.chars().last().unwrap();
-    let before_last_char = line.chars().iter().skip(l-2);
+    let before_last_char = line.chars().skip(l - 2).next();
 
-    if last_char == '\n' && before_last_char == "\r" {
-        return l - 1;
+    if last_char == '\n' {
+        if before_last_char.unwrap() == '\r' {
+            return (l - 2) as u64;
+        } else {
+            return (l - 1) as u64;
+        }
     } else {
-        return l;
+        return l as u64;
     }
 }
 
