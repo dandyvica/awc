@@ -75,10 +75,7 @@ impl Counter {
 
             // calculate max_line if any
             if opt.max_line {
-                #[cfg(target_family = "unix")]
-                let tmp = line.chars().count() as u64 - 1;
-                #[cfg(target_family = "windows")]
-                let tmp = line.chars().count() as u64 - 2;
+                let tmp = line_length(&line);
 
                 if tmp > stats.max_line {
                     stats.max_line = tmp;
@@ -87,11 +84,8 @@ impl Counter {
 
             // calculate min_line if any
             if opt.min_line {
-                #[cfg(target_family = "unix")]
-                let tmp = line.chars().count() as u64 - 1;
-                #[cfg(target_family = "windows")]
-                let tmp = line.chars().count() as u64 - 2;
-                1;
+                let tmp = line_length(&line);
+
                 if tmp < stats.min_line {
                     stats.min_line = tmp;
                 }
@@ -105,9 +99,77 @@ impl Counter {
     }
 }
 
+// calculate line length
+#[cfg(target_family = "unix")]
+fn line_length(line: &str) -> u64 {
+    // check last char
+    if line.is_empty() {
+        return 0;
+    }
+
+    // other calculate length
+    let l = line.chars().count() as u64;
+    let last_char = line.chars().last().unwrap();
+
+    if last_char == '\n' {
+        return l - 1;
+    } else {
+        return l;
+    }
+}
+
+#[cfg(target_family = "windows")]
+fn line_length(line: &str) -> u64 {
+    // check last char
+    if line.is_empty() {
+        return 0;
+    }
+
+    // other calculate length
+    let l = line.chars().count() as u64;
+    if l == 1 {
+        return 1;
+    }
+
+
+    let last_char = line.chars().last().unwrap();
+    let before_last_char = line.chars().iter().skip(l-2);
+
+    if last_char == '\n' && before_last_char == "\r" {
+        return l - 1;
+    } else {
+        return l;
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn count_utf8() {
+        // set options
+        let mut options = CliOptions::default();
+        options.bytes = true;
+        options.chars = true;
+        options.words = true;
+        options.lines = true;
+        options.max_line = true;
+        options.min_line = true;
+
+        // sample text
+        let stats = Counter::count("tests/utf8.txt", &options);
+        assert!(stats.is_ok());
+
+        let stats = stats.unwrap();
+
+        assert_eq!(stats.bytes, 1904);
+        assert_eq!(stats.chars, 1000);
+        assert_eq!(stats.words, 3);
+        assert_eq!(stats.lines, 1);
+        assert_eq!(stats.min_line, 1000);
+        assert_eq!(stats.max_line, 1000);
+    }
 
     #[test]
     #[cfg(target_family = "unix")]

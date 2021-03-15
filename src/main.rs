@@ -17,13 +17,14 @@ use options::CliOptions;
 fn main() -> Result<(), std::io::Error> {
     // get args from the command line
     let args: Vec<String> = env::args().collect();
-    //println!("args={:?}", args);
+    println!("args={:?}", args);
 
     // used to add stats to print out total
     let mut sum_stats = Stats::default();
 
     // convert arguments into flags
     let options = CliOptions::check_args(&args);
+    println!("options={:?}", options);
 
     // get files from arguments
     let mut files = get_files(&args);

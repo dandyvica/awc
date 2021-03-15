@@ -65,3 +65,5 @@ FLAGS:
             means the input file is gzipped
 ```
 
+# Caveat
+This is mainly used to count UTF-8 files, without a BOM (Bye Order Mark). it doesn't handle UCS/2, UTF-16 or UTF-32 encoded files.

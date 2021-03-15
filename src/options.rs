@@ -30,8 +30,14 @@ impl CliOptions {
     pub fn check_args<'a>(args: &'a [String]) -> CliOptions {
         let mut options = CliOptions::default();
 
-        // check flags
-        for arg in args {
+        // no option passed ? assume we want all of them
+        if args.iter().all(|x| !x.starts_with("-")) {
+            options.set_all();
+            return options;
+        }
+
+        // check flags only (so use filter combinator)
+        for arg in args.iter().filter(|x| x.starts_with("-")) {
             match arg.as_str() {
                 // manage first single flags
                 "-h" | "--help" => CliOptions::print_help(),
@@ -45,16 +51,9 @@ impl CliOptions {
                 "-a" | "--all" => options.set_all(),
                 // now check for combined flags. E.g: -bcw
                 &_ => {
-                    if arg.as_str().starts_with("-") {
-                        // explode into individual chars
-                        let maybe_flags: Vec<char> = arg.as_str().chars().collect();
-                        for c in maybe_flags {
-                            CliOptions::maybe_flags(c, &mut options);
-                        }
-                    }
-                    // otherwise consider as no flag is set, that -a is passed
-                    else {
-                        options.set_all();
+                    let maybe_flags: Vec<char> = arg.as_str().chars().collect();
+                    for c in maybe_flags {
+                        CliOptions::maybe_flags(c, &mut options);
                     }
                 }
             }
